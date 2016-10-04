@@ -18,7 +18,6 @@
  */
 
 import Foundation
-import RxCocoa
 
 /**
  * TableViewのように、ListModelが複数ある場合、[ListModel]としてもいいですが
@@ -36,6 +35,16 @@ class ListModels {
 
 class ListModel {
     
+    var valueObject : ListValueObject = ListValueObject()
+    
+    var viewModel : ListViewModel = ListViewModel()
+    
+    init() {
+    }
+}
+
+class ListValueObject {
+    
     // QiitaItemEntityにあるデータの中から表示に必要なものだけ記載する
     var id : String    = ""
     var title : String = ""
@@ -45,15 +54,8 @@ class ListModel {
     var userId    : String = ""
     var userImage : String = ""
     
-    // View用 (必要性を感じなければ、上にあるPropertyをそのまま利用でもいいです)
-    var viewIdWithTitle : Driver<String> = Driver.just("")
-    var viewUpdatedAt : Driver<String>   = Driver.just("")
-    var viewTags : Driver<String>        = Driver.just("")
-    var viewThumbnail : Driver<NSURL?>   = Driver.just(nil)
-    var viewBody : Driver<String>        = Driver.just("")
-    var viewUserId : Driver<String>      = Driver.just("")
-    
-    init() {
+    init () {
+        
     }
     
     init(data : QiitaItemEntity) {
@@ -67,5 +69,20 @@ class ListModel {
         data.tags.forEach { element in
             self.tags.append(element.name)
         }
+    }
+}
+
+class ListViewModel {
+    
+    // View用 (必要性を感じなければ、上にあるPropertyをそのまま利用でもいいです)
+    var viewIdWithTitle : String = ""
+    var viewUpdatedAt : String   = ""
+    var viewTags : String        = ""
+    var viewThumbnail : NSURL?   = nil
+    var viewBody : String        = ""
+    var viewUserId : String      = ""
+    
+    init () {
+        
     }
 }

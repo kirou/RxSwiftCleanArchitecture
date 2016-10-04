@@ -22,12 +22,14 @@ class ListTranslater {
     
     static func generate(qiitaItems qiitaItems : QiitaItemEntities) -> ListModels {
         
-        let model = ListModels()
-        qiitaItems.contentsList.forEach { entity -> () in
-            let data = ListModel(data : entity)
-            model.contentsList.append(data)
+        let models = ListModels()
+        
+        qiitaItems.contentsList.forEach { data -> () in
+            let model = ListModel()
+            model.valueObject = ListValueObject(data : data)
+            models.contentsList.append(model)
         }
         
-        return model
+        return models
     }
 }

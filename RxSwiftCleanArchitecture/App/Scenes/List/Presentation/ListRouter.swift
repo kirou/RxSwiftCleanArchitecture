@@ -36,12 +36,9 @@ class ListRouter : ListRouterProtocol {
             viewControllerId: StoryboardName.DetailPage.rawValue,
             type : DetailViewController.self)
         
-        let model = presenter.viewModels.selectedData(index: index)
-        viewController.itemId    = model.id
-        viewController.itemTitle = model.title
-        print("viewControllerviewController")
-        print(viewController.itemId)
-        print(viewController.itemTitle)
+        let model = presenter.models.selectedData(index: index)
+        viewController.itemId    = model.valueObject.id
+        viewController.itemTitle = model.valueObject.title
         
         self.viewController.navigationController?.pushViewController(viewController, animated: true)
     }

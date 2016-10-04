@@ -61,18 +61,18 @@ extension ListViewController : UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(tableView : UITableView, numberOfRowsInSection section : Int) -> Int {
-        return presenter.viewModels.contentsList.count ?? 1
+        return presenter.models.contentsList.count ?? 1
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCellWithIdentifier("ListTableViewCell", forIndexPath: indexPath) as! ListTableViewCell
         
-        guard indexPath.section == 0 && presenter.viewModels.contentsList.count > indexPath.item else {
+        guard indexPath.section == 0 && presenter.models.contentsList.count > indexPath.item else {
             return cell
         }
         
-        cell.bindData(viewModel : presenter.viewModels.contentsList[indexPath.row])
+        cell.bindData(model : presenter.models.contentsList[indexPath.row])
         return cell
     }
 }

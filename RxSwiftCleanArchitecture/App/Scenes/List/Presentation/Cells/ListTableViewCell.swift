@@ -35,15 +35,15 @@ class ListTableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
 
-    func bindData(viewModel viewModel : ListModel) {
-        
-        viewModel.viewIdWithTitle.drive(title.rx_text).addDisposableTo(disposeBag)
-        viewModel.viewTags.drive(tags.rx_text).addDisposableTo(disposeBag)
-        viewModel.viewUpdatedAt.drive(updatedAt.rx_text).addDisposableTo(disposeBag)
-        viewModel.viewThumbnail.driveNext { [unowned self] thumbnail in
+    func bindData(model model : ListModel) {
+    
+        Driver.just(model.viewModel.viewIdWithTitle).drive(title.rx_text).addDisposableTo(disposeBag)
+        Driver.just(model.viewModel.viewTags).drive(tags.rx_text).addDisposableTo(disposeBag)
+        Driver.just(model.viewModel.viewUpdatedAt).drive(updatedAt.rx_text).addDisposableTo(disposeBag)
+        Driver.just(model.viewModel.viewThumbnail).driveNext { [unowned self] thumbnail in
             self.thumbnail.sd_setImageWithURL(thumbnail)
         }.addDisposableTo(disposeBag)
-        viewModel.viewBody.drive(body.rx_text).addDisposableTo(disposeBag)
-        viewModel.viewUserId.drive(userId.rx_text).addDisposableTo(disposeBag)
+        Driver.just(model.viewModel.viewBody).drive(body.rx_text).addDisposableTo(disposeBag)
+        Driver.just(model.viewModel.viewUserId).drive(userId.rx_text).addDisposableTo(disposeBag)
     }
 }
