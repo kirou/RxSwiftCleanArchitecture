@@ -30,9 +30,6 @@ class DetailViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
-        print(itemTitle)
-        print(itemId)
-        
         viewItemTitle.text   = itemTitle
         viewItemId.text      = itemId
         

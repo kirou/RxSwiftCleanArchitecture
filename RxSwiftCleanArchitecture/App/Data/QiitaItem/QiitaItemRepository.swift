@@ -20,6 +20,7 @@ class QiitaItemRepository : QiitaItemRepositoryProtocol {
         
         return dataStore.fetch(params : params, retryCount : retryCount)
             .catchError { error in
+                
                 // API Requestでthrowされた時のcatch先
                 // ここでは空のオブジェクトを入れるようにする
                 return Observable.just(QiitaItemEntities())

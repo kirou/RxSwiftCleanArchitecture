@@ -28,7 +28,7 @@ protocol ListUseCaseProtocol : class {
 
 class ListUseCase : ListUseCaseProtocol {
     
-    var qiitaItemRepository : QiitaItemRepositoryProtocol!
+    private let qiitaItemRepository : QiitaItemRepositoryProtocol!
     
     init (qiitaItemRepository : QiitaItemRepositoryProtocol) {
         self.qiitaItemRepository = qiitaItemRepository
@@ -43,11 +43,8 @@ extension ListUseCase {
     func loadData() -> Observable<ListModels> {
         
         return qiitaItemRepository.fetch(params : [:], retryCount: 3)
-            .subscribeOn(Dependencies.sharedInstance.backgroundScheduler)
             .map { ListTranslater.generate(qiitaItems : $0) }
             .map { [unowned self] in self.updateContentsModel(models : $0) }
-            .observeOn(Dependencies.sharedInstance.mainScheduler)
-            .shareReplay(1)
     }
 }
 
@@ -55,7 +52,7 @@ private extension ListUseCase {
     
     func updateContentsModel(models models : ListModels) -> ListModels {
         
-        models.contentsList.forEach { model -> () in
+        models.contentsList.forEach { [unowned self] model -> () in
             self.createViewModel(model : model)
         }
         return models

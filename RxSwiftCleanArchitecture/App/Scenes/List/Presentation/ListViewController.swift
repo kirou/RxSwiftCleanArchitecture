@@ -19,6 +19,7 @@ class ListViewController: UIViewController {
     var presenter : ListPresenterProtocol!
     var router : ListRouterProtocol!
     
+    var models: ListModels = ListModels()
     let disposeBag = DisposeBag()
     let tableViewRefreshControl = UIRefreshControl()
     
@@ -61,18 +62,18 @@ extension ListViewController : UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(tableView : UITableView, numberOfRowsInSection section : Int) -> Int {
-        return presenter.models.contentsList.count ?? 1
+        return models.contentsList.count ?? 1
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCellWithIdentifier("ListTableViewCell", forIndexPath: indexPath) as! ListTableViewCell
         
-        guard indexPath.section == 0 && presenter.models.contentsList.count > indexPath.item else {
+        guard indexPath.section == 0 && models.contentsList.count > indexPath.item else {
             return cell
         }
         
-        cell.bindData(model : presenter.models.contentsList[indexPath.row])
+        cell.bindData(model: models.contentsList[indexPath.row])
         return cell
     }
 }
@@ -81,18 +82,19 @@ private extension ListViewController {
     
     func setSubscribe() {
         
-        presenter.viewReloadData.asObserver().filter{ $0 == true}.subscribeNext { [unowned self] _ in
+        presenter.viewReloadData.subscribeNext { [unowned self] models in
+            self.models = models
             self.errorView.hidden = true
             self.tableView.hidden = false
             self.tableView.reloadData()
         }.addDisposableTo(disposeBag)
         
-        presenter.viewErrorPage.asObserver().filter {$0 == true}.subscribeNext { [unowned self] _ in
+        presenter.viewErrorPage.filter {$0 == true}.subscribeNext { [unowned self] _ in
             self.errorView.hidden = false
             self.tableView.hidden = true
         }.addDisposableTo(disposeBag)
         
-        presenter.isStartActivityIndicator.asObserver().subscribeNext { [unowned self] status in
+        presenter.isStartActivityIndicator.subscribeNext { [unowned self] status in
             if status == true {
                 self.activityIndicator.startAnimating()
                 self.activityIndicator.hidden = false

@@ -22,11 +22,9 @@ protocol ListRouterProtocol {
 class ListRouter : ListRouterProtocol {
     
     weak private var viewController : ListViewController!
-    weak private var presenter      : ListPresenterProtocol!
     
-    init (viewController : ListViewController, presenter : ListPresenterProtocol) {
+    init (viewController : ListViewController) {
         self.viewController = viewController
-        self.presenter     = presenter
     }
     
     func navigateToDetailScenes(index index : Int) {
@@ -36,7 +34,7 @@ class ListRouter : ListRouterProtocol {
             viewControllerId: StoryboardName.DetailPage.rawValue,
             type : DetailViewController.self)
         
-        let model = presenter.models.selectedData(index: index)
+        let model = self.viewController.models.selectedData(index: index)
         viewController.itemId    = model.valueObject.id
         viewController.itemTitle = model.valueObject.title
         

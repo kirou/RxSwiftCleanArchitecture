@@ -24,8 +24,7 @@ protocol ListPresenterProtocol : class {
     
     // viewModel部分は作るものによってはObservableやSubjectにする場合もあると思いますが
     // 今回はそのままです
-    var models : ListModels {get}
-    var viewReloadData : PublishSubject<Bool> {get}
+    var viewReloadData : PublishSubject<ListModels> {get}
     var viewErrorPage : PublishSubject<Bool> {get}
     var isStartActivityIndicator : PublishSubject<Bool> {get}
     
@@ -34,11 +33,10 @@ protocol ListPresenterProtocol : class {
 
 class ListPresenter : ListPresenterProtocol {
     
-    var useCase : ListUseCaseProtocol!
+    private let useCase : ListUseCaseProtocol!
     
     // 公開
-    private(set) var models : ListModels = ListModels()
-    private(set) var viewReloadData = PublishSubject<Bool>()
+    private(set) var viewReloadData = PublishSubject<ListModels>()
     private(set) var viewErrorPage  = PublishSubject<Bool>()
     private(set) var isStartActivityIndicator = PublishSubject<Bool>()
     
@@ -57,20 +55,19 @@ extension ListPresenter {
     
     func load() {
         
-        let preAction = Observable.just(true).map { [unowned self] in
-                self.isStartActivityIndicator.onNext($0)
-            }
-        
-        let loadData = self.useCase.loadData()
-        
-        preAction
-            .withLatestFrom(loadData)
+        Observable.just()
+            .doOn { [unowned self] in self.isStartActivityIndicator.onNext(true) }
+            .observeOn(Dependencies.sharedInstance.backgroundScheduler)
+            .flatMap { [unowned self] in self.useCase.loadData() }
+            .observeOn(Dependencies.sharedInstance.mainScheduler)
+            .shareReplay(1)
+            .doOn { [unowned self] in self.isStartActivityIndicator.onNext(false) }
             .subscribe(
                 // ストリームから流れたデータをViewModelsにセット
                 onNext : { [weak self] models in
+                    
                     guard let weakSelf = self else { return }
-                    weakSelf.models = models
-                    weakSelf.viewReloadData.onNext(true)
+                    weakSelf.viewReloadData.onNext(models)
                     weakSelf.isStartActivityIndicator.onNext(false)
                 },
                 // エラーが流れたらエラーページを表示

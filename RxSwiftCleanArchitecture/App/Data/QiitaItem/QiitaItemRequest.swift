@@ -22,6 +22,7 @@ class QiitaItemRequest {
         
         return apiClient.request(method: .GET, url: url, params: [:])
             .retry(retryCount)
+            .debug("hgoeghoegheo")
             .map { [weak self] (data, response) in
                 guard let qiitaItemEntities = self?.createResponse(data: data) else {
                     throw ErrorHandring.Request.ParseError

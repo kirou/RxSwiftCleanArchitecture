@@ -23,7 +23,7 @@ class ListConfigurator {
         
         let presenter : ListPresenter = ListPresenter(useCase : useCase)
         
-        let router = ListRouter(viewController: viewController, presenter : presenter)
+        let router = ListRouter(viewController: viewController)
         
         viewController.presenter = presenter
         viewController.router = router

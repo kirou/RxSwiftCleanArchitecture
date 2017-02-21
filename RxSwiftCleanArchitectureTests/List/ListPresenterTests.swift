@@ -10,7 +10,7 @@ import XCTest
 @testable import RxSwiftCleanArchitecture
 
 import RxSwift
-import RxTests
+import RxTest
 
 class ListPresenterCaseTests : XCTestCase {
     
